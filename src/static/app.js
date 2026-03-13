@@ -569,6 +569,15 @@ document.addEventListener("DOMContentLoaded", () => {
         `
         }
       </div>
+      <div class="share-section">
+        <span class="share-label">Share:</span>
+        <div class="share-buttons">
+          <button class="share-btn share-twitter" data-activity="${name}" title="Share on X (Twitter)">𝕏</button>
+          <button class="share-btn share-facebook" data-activity="${name}" title="Share on Facebook">f</button>
+          <button class="share-btn share-email" data-activity="${name}" title="Share via Email">✉</button>
+          <button class="share-btn share-copy" data-activity="${name}" title="Copy link">🔗</button>
+        </div>
+      </div>
     `;
 
     // Add click handlers for delete buttons
@@ -587,7 +596,76 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
+    // Add click handlers for share buttons
+    activityCard.querySelector(".share-twitter").addEventListener("click", () => {
+      shareActivity("twitter", name, details);
+    });
+    activityCard.querySelector(".share-facebook").addEventListener("click", () => {
+      shareActivity("facebook", name, details);
+    });
+    activityCard.querySelector(".share-email").addEventListener("click", () => {
+      shareActivity("email", name, details);
+    });
+    activityCard.querySelector(".share-copy").addEventListener("click", (event) => {
+      shareActivity("copy", name, details, event.currentTarget);
+    });
+
     activitiesList.appendChild(activityCard);
+  }
+
+  // Function to share an activity on social media or via clipboard
+  function shareActivity(platform, name, details, buttonElement) {
+    const schedule = formatSchedule(details);
+    const text = `Check out "${name}" at Mergington High School! ${details.description} — ${schedule}`;
+    const url = window.location.href;
+
+    if (platform === "twitter") {
+      const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+      window.open(twitterUrl, "_blank", "noopener,noreferrer");
+    } else if (platform === "facebook") {
+      const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}`;
+      window.open(facebookUrl, "_blank", "noopener,noreferrer");
+    } else if (platform === "email") {
+      const subject = encodeURIComponent(`Join me for "${name}" at Mergington High School!`);
+      const body = encodeURIComponent(`${text}\n\nLearn more: ${url}`);
+      window.open(`mailto:?subject=${subject}&body=${body}`, "_self");
+    } else if (platform === "copy") {
+      const shareText = `${text} ${url}`;
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(shareText).then(() => {
+          const original = buttonElement.textContent;
+          buttonElement.textContent = "✓";
+          buttonElement.classList.add("share-copied");
+          setTimeout(() => {
+            buttonElement.textContent = original;
+            buttonElement.classList.remove("share-copied");
+          }, 2000);
+        }).catch(() => {
+          showMessage("Could not copy link. Please try again.", "error");
+        });
+      } else {
+        // Fallback for non-secure contexts or older browsers
+        const textarea = document.createElement("textarea");
+        textarea.value = shareText;
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+          document.execCommand("copy");
+          const original = buttonElement.textContent;
+          buttonElement.textContent = "✓";
+          buttonElement.classList.add("share-copied");
+          setTimeout(() => {
+            buttonElement.textContent = original;
+            buttonElement.classList.remove("share-copied");
+          }, 2000);
+        } catch {
+          showMessage("Could not copy link. Please try again.", "error");
+        }
+        document.body.removeChild(textarea);
+      }
+    }
   }
 
   // Event listeners for search and filter

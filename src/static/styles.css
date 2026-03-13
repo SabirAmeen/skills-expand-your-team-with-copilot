@@ -32,6 +32,24 @@
   --info-light: #d1ecf1;
 }
 
+/* Dark mode color overrides */
+[data-theme="dark"] {
+  --background: #121212;
+  --surface: #1e1e1e;
+  --text-primary: #e0e0e0;
+  --text-secondary: #aaaaaa;
+  --border: #333333;
+  --border-light: #2a2a2a;
+  --border-focus: #444444;
+  --primary: #534bae;
+  --primary-light: #7c74c9;
+  --primary-dark: #1a237e;
+  --success-light: #1b3a1d;
+  --warning-light: #3d2e00;
+  --error-light: #3b0f0f;
+  --info-light: #0a2228;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -203,6 +221,12 @@ section h3 {
   border-radius: 10px;
   text-transform: uppercase;
   letter-spacing: 0.3px;
+}
+
+/* Activity tag dark mode: !important needed to override inline styles applied by JavaScript */
+[data-theme="dark"] .activity-tag {
+  background: #2a2d4a !important;
+  color: #9fa8da !important;
 }
 
 /* Capacity Indicator */
@@ -492,6 +516,8 @@ footer {
   border-radius: 20px 0 0 20px;
   font-size: 0.85rem;
   transition: all 0.3s ease;
+  background-color: var(--surface);
+  color: var(--text-primary);
 }
 
 .search-box input:focus {
@@ -617,6 +643,15 @@ footer {
   position: absolute;
   top: 10px;
   right: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#dark-mode-toggle {
+  padding: 4px 10px;
+  font-size: 1rem;
+  line-height: 1;
 }
 
 #user-status {
@@ -663,4 +698,13 @@ footer {
 
 #logout-button:hover {
   background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Dark mode: form inputs */
+[data-theme="dark"] input[type="text"],
+[data-theme="dark"] input[type="email"],
+[data-theme="dark"] input[type="password"] {
+  background-color: var(--surface);
+  color: var(--text-primary);
+  border-color: var(--border);
 }
